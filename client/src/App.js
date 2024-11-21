@@ -6,6 +6,9 @@ const App = () => {
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("1");
   const [verificationResult, setVerificationResult] = useState("");
+  const [buttonClickCount, setButtonClickCount] = useState(0); // משתנה לספירת הלחיצות
+  const [buttonState, setButtonState] = useState(0); // משתנה שמתחיל ב-0 ומשתנה ל-1 לאחר לחיצה
+
 
   // Google reCAPTCHA Site Key (תחליפי למפתח שלך)
   const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";
@@ -23,6 +26,13 @@ const App = () => {
     // }
   };
   
+   // טיפול בלחיצה על הכפתור
+   const handleSendCaptcha = () => {
+    setButtonClickCount((prevCount) => prevCount + 1); // הגדלת מספר הלחיצות
+    if (buttonState === 0) {
+      setButtonState(1); // עדכון המצב ל-1 לאחר הלחיצה הראשונה
+    }
+  };
   
   // שליחת הטוקן לשרת לבדיקה
   const handleSubmit = async () => {
@@ -68,7 +78,7 @@ const App = () => {
         Next Page
       </button>
       <button
-        // onClick={handleSubmit}
+        onClick={handleSendCaptcha} // קריאה לפונקציה שמטפלת בלחיצה
         // disabled={!captchaVerified}
         style={{
           marginTop: "20px",
@@ -84,6 +94,7 @@ const App = () => {
         Send Capatcha to Gemini AI
       </button>
       {verificationResult && <p style={{ marginTop: "20px" }}>{verificationResult}</p>}
+      <p>Button clicked: {buttonClickCount} times</p> {/* הצגת מספר הלחיצות */}
     </div>
   );
 };

@@ -41,10 +41,11 @@ const App = () => {
         alert("Please complete the CAPTCHA!");
         return;
       }
-
+console.log("before");
       const response = await axios.post("http://localhost:5000/verify-captcha", {
         token: captchaToken,
       });
+      console.log("after");
 
       setVerificationResult(response.data.success ? "CAPTCHA Verified!" : "CAPTCHA Failed!");
     } catch (error) {

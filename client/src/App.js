@@ -20,10 +20,10 @@ const App = () => {
       setCaptchaToken(token);
       setCaptchaVerified(true);
     } 
-    else {
-      setCaptchaVerified(false);
-      setCaptchaToken("");
-    }
+    // else {
+    //   setCaptchaVerified(false);
+    //   setCaptchaToken("");
+    // }
   };
   
    // טיפול בלחיצה על הכפתור

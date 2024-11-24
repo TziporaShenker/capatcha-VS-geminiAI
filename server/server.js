@@ -79,7 +79,8 @@ const connectDB = require("./config/db");
 connectDB();
 
 // ייבוא הנתיבים
-const captchaRoutes = require("./routes/captchaRoutes");
+const captchaRoute = require("./routes/captchaRoute");
+const pictureTestRoute = require("./routes/pictureTestRoute");
 
 const app = express();
 
@@ -88,7 +89,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // שימוש בנתיבים
-app.use("/verify-captcha", captchaRoutes);
+// app.use("/verify-captcha", captchaRoute);
+app.use("/pictureTest", pictureTestRoute);
 
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;

@@ -26,13 +26,35 @@ const App = () => {
     }
   };
   
-   // טיפול בלחיצה על הכפתור
-   const handleSendCaptcha = () => {
-    setButtonClickCount((prevCount) => prevCount + 1); // הגדלת מספר הלחיצות
-    if (buttonState === 0) {
-      setButtonState(1); // עדכון המצב ל-1 לאחר הלחיצה הראשונה
+  const handleSendCaptcha = async () => {
+    try {
+      setButtonClickCount((prevCount) => prevCount + 1); // הגדלת מספר הלחיצות
+      if (buttonState === 0) {
+        setButtonState(1); // עדכון המצב ל-1 לאחר הלחיצה הראשונה
+      }
+  
+      // פרמטרים לשליחה
+      const data = {
+        verified: true,  // or the value you're expecting here
+        token: 'abc123', // the token value that should be passed
+      };
+      
+      // בקשת POST לשרת
+      const response = await axios.post("http://localhost:5000/pictureTest", data);
+
+      console.log(response.data.success);
+
+      if (response.data.success) {
+        alert("Captcha saved successfully!");
+      } else {
+        alert("Failed to save captcha. Try again.");
+      }
+    } catch (error) {
+      console.error("Error sending data to server:", error);
+      alert("Error occurred while sending data. Check the console for details.");
     }
   };
+  
   
   // שליחת הטוקן לשרת לבדיקה
   const handleSubmit = async () => {
@@ -92,7 +114,7 @@ console.log("before");
           borderRadius: "5px",
         }}
       >
-        Send Capatcha to Gemini AI
+        Send Captcha to Gemini AI
       </button>
       {verificationResult && <p style={{ marginTop: "20px" }}>{verificationResult}</p>}
       <p>Button clicked: {buttonClickCount} times</p> {/* הצגת מספר הלחיצות */}

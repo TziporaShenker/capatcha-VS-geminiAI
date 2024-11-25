@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import html2canvas from "html2canvas";
 import axios from "axios";
 
 const App = () => {
@@ -25,6 +24,7 @@ const App = () => {
     }
   };
 
+  //גירסה 1
   // const captureAndSendCaptcha = async () => {
   //   console.log("captureAndSendCaptcha");
   
@@ -66,6 +66,35 @@ const App = () => {
   //     // alert(response.data.message || "Captcha image sent successfully!");
   //   } catch (error) {
   //     console.error("Error capturing or sending captcha image:", error);
+  //     alert("An error occurred. Please check the console for details.");
+  //   }
+  // };
+
+    //גירסה 2
+  // const captureScreenshot = async () => {
+  //   const url = "http://localhost:3000/"; // ה-URL שברצונך לצלם
+  
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:5000/screenshot/",
+  //       { url }, // שליחת ה-URL לשרת
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  
+  //     if (response.data.success) {
+  //       console.log("Screenshot successfully captured and uploaded!");
+  //       console.log("Response from server:", response.data.geminiResponse);
+  //       alert("Screenshot captured and uploaded successfully!");
+  //     } else {
+  //       console.error("Error:", response.data.message);
+  //       alert(`Failed to capture screenshot: ${response.data.message}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error sending request to server:", error);
   //     alert("An error occurred. Please check the console for details.");
   //   }
   // };
@@ -221,6 +250,7 @@ const App = () => {
             captureAndSendCaptcha();
           }, 10000); // הפעלה לאחר 2 שניות
         }}
+
         // disabled={!captchaVerified}
         style={{
           marginTop: "20px",

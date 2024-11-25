@@ -81,6 +81,8 @@ connectDB();
 // ייבוא הנתיבים
 const captchaRoute = require("./routes/captchaRoute");
 const pictureTestRoute = require("./routes/pictureTestRoute");
+const screenshotUploadRoute = require("./routes/screenshotUploadRoute");
+
 
 const app = express();
 
@@ -91,7 +93,7 @@ app.use(bodyParser.json());
 // שימוש בנתיבים
 // app.use("/verify-captcha", captchaRoute);
 app.use("/pictureTest", pictureTestRoute);
-
+// app.use("/screenshot", screenshotUploadRoute);
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

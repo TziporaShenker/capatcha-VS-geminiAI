@@ -4,7 +4,7 @@ const Captcha = require("../models/captchaModel");
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 // אימות CAPTCHA
-exports.verifyCaptcha = async (req, res) => {
+const verifyCaptcha = async (req, res) => {
   const { token } = req.body;
 
   if (!token) {
@@ -42,3 +42,4 @@ exports.verifyCaptcha = async (req, res) => {
   }
   
 };
+module.exports = { verifyCaptcha };

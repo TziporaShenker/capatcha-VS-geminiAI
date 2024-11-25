@@ -8,6 +8,9 @@ const App = () => {
   const [verificationResult, setVerificationResult] = useState("");
   const [buttonClickCount, setButtonClickCount] = useState(0); // משתנה לספירת הלחיצות
   const [buttonState, setButtonState] = useState(0); // משתנה שמתחיל ב-0 ומשתנה ל-1 לאחר לחיצה
+  const [geminiResponse, setGeminiResponse] = useState(null); // לאחסון התשובה מגימיני
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Google reCAPTCHA Site Key (תחליפי למפתח שלך)
   const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";
@@ -24,129 +27,135 @@ const App = () => {
     }
   };
 
-  //גירסה 1
-  // const captureAndSendCaptcha = async () => {
-  //   console.log("captureAndSendCaptcha");
-  
-  //   try {
-  //     // הגדרת המידות של אזור הצילום
-  //     const x = 50; // מיקום X (התחלה מ-50 פיקסלים מהקצה השמאלי של הדף)
-  //     const y = 100; // מיקום Y (התחלה מ-100 פיקסלים מהקצה העליון של הדף)
-  //     const width = 800; // רוחב אזור הצילום (400 פיקסלים)
-  //     const height = 400; // גובה אזור הצילום (200 פיקסלים)
-  
-      
-  //     // צילום מסך של אזור מדויק בעמוד
-  //     const canvas = await html2canvas(document.body);
-  
-  //     // , {
-  //     //   x: x, // מיקום הצילום בציר X
-  //     //   y: y, // מיקום הצילום בציר Y
-  //     //   width: width, // רוחב הצילום
-  //     //   height: height, // גובה הצילום
-  //     // }
-  //     console.log("canvas");
-  //     console.log(canvas);
-  //     const imageData = canvas.toDataURL("image/png"); // המרת ה-canvas לתמונה בפורמט Base64
-  
-  //     // הצגת התמונה שנלקחה (לצורך הדגמה)
-  //     const imageElement = document.createElement("img");
-  //     imageElement.src = imageData; // הגדרת מקור התמונה כנתון Base64 שהתקבל
-  //     document.body.appendChild(imageElement); // הוספת התמונה לדף
-  
-  //     // שליחת התמונה לשרת (במידת הצורך)
-  //     // const response = await axios.post(
-  //     //   "http://localhost:5000/upload-captcha-image",
-  //     //   {
-  //     //     image: imageData,
-  //     //   }
-  //     // );
-  
-  //     // console.log("Server response:", response.data);
-  //     // alert(response.data.message || "Captcha image sent successfully!");
-  //   } catch (error) {
-  //     console.error("Error capturing or sending captcha image:", error);
-  //     alert("An error occurred. Please check the console for details.");
-  //   }
-  // };
 
-    //גירסה 2
-  // const captureScreenshot = async () => {
-  //   const url = "http://localhost:3000/"; // ה-URL שברצונך לצלם
-  
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:5000/screenshot/",
-  //       { url }, // שליחת ה-URL לשרת
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  
-  //     if (response.data.success) {
-  //       console.log("Screenshot successfully captured and uploaded!");
-  //       console.log("Response from server:", response.data.geminiResponse);
-  //       alert("Screenshot captured and uploaded successfully!");
-  //     } else {
-  //       console.error("Error:", response.data.message);
-  //       alert(`Failed to capture screenshot: ${response.data.message}`);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error sending request to server:", error);
-  //     alert("An error occurred. Please check the console for details.");
-  //   }
-  // };
 
   const captureAndSendCaptcha = async () => {
     console.log("captureAndSendCaptcha");
-  
+
     try {
       // בקשת הרשאה ללכידת המסך
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: { mediaSource: "screen" },
       });
-  
+
       // יצירת אלמנט וידאו כדי לקבל את זרם המסך
       const video = document.createElement("video");
       video.srcObject = stream;
-  
+
       await video.play();
-  
+
       // הוספת השהיה של 2 שניות כדי לאפשר לחלון הבחירה להיעלם
       await new Promise((resolve) => setTimeout(resolve, 2000));
-  
+
       // יצירת canvas ולכידת המסך
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-  
+
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
+
       // עצירת הזרם כדי למנוע דליפת משאבים
       stream.getTracks().forEach((track) => track.stop());
-  
-      // המרת התמונה לנתון Base64
-      const imageData = canvas.toDataURL("image/png");
-  
-      // הצגת התמונה שנלקחה (לצורך הדגמה)
-      const imageElement = document.createElement("img");
-      imageElement.src = imageData; // הגדרת מקור התמונה כנתון Base64 שהתקבל
-      document.body.appendChild(imageElement); // הוספת התמונה לדף
-  
+
+      //לפי המידות של התמונה שגיפיטי סימן לי!!!
+      // // הגדרת האזור לחיתוך (לפי פיקסלים)
+      // const clipX = 250; // התחלת X
+      // const clipY = 0; // התחלת Y
+      // const clipWidth = 750; // רוחב החיתוך
+      // const clipHeight = 800; // גובה החיתוך
+
+      // הגדרת האזור לחיתוך (לפי פיקסלים)
+      const clipX = 380; // התחלת X
+      const clipY = 130; // התחלת Y
+      const clipWidth = 510; // רוחב החיתוך
+      const clipHeight = 820; // גובה החיתוך
+
+      // יצירת canvas חדש לחיתוך
+      const croppedCanvas = document.createElement("canvas");
+      croppedCanvas.width = clipWidth;
+      croppedCanvas.height = clipHeight;
+
+      const croppedCtx = croppedCanvas.getContext("2d");
+      croppedCtx.drawImage(
+        canvas,
+        clipX,
+        clipY,
+        clipWidth,
+        clipHeight,
+        0,
+        0,
+        clipWidth,
+        clipHeight
+      );
+
+
+      // // המרת התמונה לנתון Base64
+      // const imageData = canvas.toDataURL("image/png");
+
+      // // הצגת התמונה שנלקחה (לצורך הדגמה)
+      // const imageElement = document.createElement("img");
+      // imageElement.src = imageData; // הגדרת מקור התמונה כנתון Base64 שהתקבל
+      // document.body.appendChild(imageElement); // הוספת התמונה לדף
+
+      // // המרת התמונה החדשה לנתון Base64
+      // const croppedImageData = croppedCanvas.toDataURL("image/png");
+
+      // // הצגת התמונה שנחתכה (לצורך הדגמה)
+      // const croppedImageElement = document.createElement("img");
+      // croppedImageElement.src = croppedImageData;
+      // document.body.appendChild(croppedImageElement);
+
+      // const croppedImageData = croppedCanvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
+
+      const croppedImageData = croppedCanvas.toDataURL("image/jpeg", 0.7) // מקודדת תמונה ל-JPEG ודוחסת ל-70%
+        .replace(/^data:image\/jpeg;base64,/, "");
+      // העלאה לג'מיני
+      // await analyzeCaptchaWithGemini(base64Data);
+
       // שליחת התמונה לשרת (אם יש צורך)
       // const response = await axios.post("http://localhost:5000/upload-captcha-image", { image: imageData });
       // console.log("Server response:", response.data);
       // alert(response.data.message || "Captcha image sent successfully!");
+
+      // שליחת התמונה והפרומפט לשרת
+      setLoading(true); // מצב טעינה
+      setError(null); // איפוס שגיאות
+      setGeminiResponse(null); // איפוס תוצאה
+
+
+      const prompt = "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
+
+      try {
+
+        const response = await axios.post("http://localhost:5000/analyzeCaptcha", {
+          imageBase64: croppedImageData,
+          prompt,
+        });
+
+        setLoading(false);
+
+        if (response.data.success) {
+          setGeminiResponse(response.data.data); // שמירת התשובה מגימיני
+          console.log("Gemini Response:", response.data.data);
+          console.log("response.data", response.data)
+        } else {
+          setError(response.data.message || "Failed to process captcha.");
+        }
+      } catch (error) {
+        console.error("Error sending captcha to server:", error);
+        setLoading(false);
+        setError("An error occurred while processing the captcha.");
+      }
     } catch (error) {
       console.error("Error capturing or sending captcha image:", error);
-      alert("An error occurred. Please check the console for details.");
+      setLoading(false);
+      setError("An error occurred while capturing the captcha.");
     }
+
   };
-  
-  
+
+
 
   const handleSendCaptcha = async () => {
     try {
@@ -248,27 +257,37 @@ const App = () => {
         onClick={() => {
           setTimeout(() => {
             captureAndSendCaptcha();
-          }, 10000); // הפעלה לאחר 2 שניות
+          }, 3000); // הפעלה לאחר 2 שניות
         }}
 
-        // disabled={!captchaVerified}
         style={{
           marginTop: "20px",
           padding: "10px 20px",
           fontSize: "16px",
-          // cursor: captchaVerified ? "pointer" : "not-allowed",
           backgroundColor: captchaVerified ? "blue" : "gray",
           color: "white",
           border: "none",
           borderRadius: "5px",
         }}
+      // disabled={!captchaVerified || loading}
       >
-        captureAndSendCaptcha
+        {loading ? "Processing..." : "Send Captcha to Gemini AI"}
       </button>
+
+      {loading && <p style={{ marginTop: "20px" }}>Processing the captcha...</p>}
+      {error && <p style={{ marginTop: "20px", color: "red" }}>{error}</p>}
+      {geminiResponse && (
+        <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#f9f9f9", borderRadius: "5px" }}>
+          <h3>Gemini Response:</h3>
+          <p>{geminiResponse}</p>
+        </div>
+      )}
       {verificationResult && (
         <p style={{ marginTop: "20px" }}>{verificationResult}</p>
       )}
       <p>Button clicked: {buttonClickCount} times</p> {/* הצגת מספר הלחיצות */}
+
+
     </div>
   );
 };
@@ -395,3 +414,79 @@ export default App;
 // };
 
 // export default App;
+
+
+//גירסה 1
+// const captureAndSendCaptcha = async () => {
+//   console.log("captureAndSendCaptcha");
+
+//   try {
+//     // הגדרת המידות של אזור הצילום
+//     const x = 50; // מיקום X (התחלה מ-50 פיקסלים מהקצה השמאלי של הדף)
+//     const y = 100; // מיקום Y (התחלה מ-100 פיקסלים מהקצה העליון של הדף)
+//     const width = 800; // רוחב אזור הצילום (400 פיקסלים)
+//     const height = 400; // גובה אזור הצילום (200 פיקסלים)
+
+
+//     // צילום מסך של אזור מדויק בעמוד
+//     const canvas = await html2canvas(document.body);
+
+//     // , {
+//     //   x: x, // מיקום הצילום בציר X
+//     //   y: y, // מיקום הצילום בציר Y
+//     //   width: width, // רוחב הצילום
+//     //   height: height, // גובה הצילום
+//     // }
+//     console.log("canvas");
+//     console.log(canvas);
+//     const imageData = canvas.toDataURL("image/png"); // המרת ה-canvas לתמונה בפורמט Base64
+
+//     // הצגת התמונה שנלקחה (לצורך הדגמה)
+//     const imageElement = document.createElement("img");
+//     imageElement.src = imageData; // הגדרת מקור התמונה כנתון Base64 שהתקבל
+//     document.body.appendChild(imageElement); // הוספת התמונה לדף
+
+//     // שליחת התמונה לשרת (במידת הצורך)
+//     // const response = await axios.post(
+//     //   "http://localhost:5000/upload-captcha-image",
+//     //   {
+//     //     image: imageData,
+//     //   }
+//     // );
+
+//     // console.log("Server response:", response.data);
+//     // alert(response.data.message || "Captcha image sent successfully!");
+//   } catch (error) {
+//     console.error("Error capturing or sending captcha image:", error);
+//     alert("An error occurred. Please check the console for details.");
+//   }
+// };
+
+//גירסה 2
+// const captureScreenshot = async () => {
+//   const url = "http://localhost:3000/"; // ה-URL שברצונך לצלם
+
+//   try {
+//     const response = await axios.post(
+//       "http://localhost:5000/screenshot/",
+//       { url }, // שליחת ה-URL לשרת
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     if (response.data.success) {
+//       console.log("Screenshot successfully captured and uploaded!");
+//       console.log("Response from server:", response.data.geminiResponse);
+//       alert("Screenshot captured and uploaded successfully!");
+//     } else {
+//       console.error("Error:", response.data.message);
+//       alert(`Failed to capture screenshot: ${response.data.message}`);
+//     }
+//   } catch (error) {
+//     console.error("Error sending request to server:", error);
+//     alert("An error occurred. Please check the console for details.");
+//   }
+// };

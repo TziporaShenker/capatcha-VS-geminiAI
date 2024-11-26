@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import NavigationMenu from "./NavigationMenu";
 import axios from "axios";
 
-const App = () => {
+const CaptchaTest = () => {
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("1");
   const [verificationResult, setVerificationResult] = useState("");
@@ -11,6 +12,9 @@ const App = () => {
   const [geminiResponse, setGeminiResponse] = useState(null); // לאחסון התשובה מגימיני
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [croppedImageData, setCroppedImageData] = useState(null);
+  const [captchaSuccess, setCaptchaSuccess] = useState(null); // משתנה לרדיו בוטון
+
 
   // Google reCAPTCHA Site Key (תחליפי למפתח שלך)
   const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";
@@ -28,117 +32,191 @@ const App = () => {
   };
 
 
+//פונקציה עובדת עם חלונית קופצת לצילום מסך
+  // const captureAndSendCaptcha = async () => {
+  //   console.log("captureAndSendCaptcha");
 
-  const captureAndSendCaptcha = async () => {
-    console.log("captureAndSendCaptcha");
+  //   try {
+  //     // בקשת הרשאה ללכידת המסך
+  //     const stream = await navigator.mediaDevices.getDisplayMedia({
+  //       video: { mediaSource: "screen" },
+  //     });
+
+  //     // יצירת אלמנט וידאו כדי לקבל את זרם המסך
+  //     const video = document.createElement("video");
+  //     video.srcObject = stream;
+  //     await video.play();
+
+  //     // הוספת השהיה של 2 שניות כדי לאפשר לחלון הבחירה להיעלם
+  //     await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  //     // יצירת canvas ולכידת המסך
+  //     const canvas = document.createElement("canvas");
+  //     canvas.width = video.videoWidth;
+  //     canvas.height = video.videoHeight;
+
+  //     const ctx = canvas.getContext("2d");
+  //     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  //     // עצירת הזרם כדי למנוע דליפת משאבים
+  //     stream.getTracks().forEach((track) => track.stop());
+
+  //     //לפי המידות של התמונה שגיפיטי סימן לי!!!
+  //     // // הגדרת האזור לחיתוך (לפי פיקסלים)
+  //     // const clipX = 250; // התחלת X
+  //     // const clipY = 0; // התחלת Y
+  //     // const clipWidth = 750; // רוחב החיתוך
+  //     // const clipHeight = 800; // גובה החיתוך
+
+  //     // הגדרת האזור לחיתוך (לפי פיקסלים)
+  //     const clipX = 380; // התחלת X
+  //     const clipY = 130; // התחלת Y
+  //     const clipWidth = 510; // רוחב החיתוך
+  //     const clipHeight = 820; // גובה החיתוך
+
+  //     // יצירת canvas חדש לחיתוך
+  //     const croppedCanvas = document.createElement("canvas");
+  //     croppedCanvas.width = clipWidth;
+  //     croppedCanvas.height = clipHeight;
+
+  //     const croppedCtx = croppedCanvas.getContext("2d");
+  //     croppedCtx.drawImage(
+  //       canvas,
+  //       clipX,
+  //       clipY,
+  //       clipWidth,
+  //       clipHeight,
+  //       0,
+  //       0,
+  //       clipWidth,
+  //       clipHeight
+  //     );
+
+
+  //     // // המרת התמונה לנתון Base64
+  //     // const imageData = canvas.toDataURL("image/png");
+
+  //     // // הצגת התמונה שנלקחה (לצורך הדגמה)
+  //     // const imageElement = document.createElement("img");
+  //     // imageElement.src = imageData; // הגדרת מקור התמונה כנתון Base64 שהתקבל
+  //     // document.body.appendChild(imageElement); // הוספת התמונה לדף
+
+  //     // המרת התמונה החדשה לנתון Base64
+  //     const croppedImageData1 = croppedCanvas.toDataURL("image/png");
+
+  //     // הצגת התמונה שנחתכה (לצורך הדגמה)
+  //     const croppedImageElement = document.createElement("img");
+  //     croppedImageElement.src = croppedImageData1;
+  //     document.body.appendChild(croppedImageElement);
+
+  //     // const croppedImageData = croppedCanvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
+
+  //     const croppedImageData = croppedCanvas.toDataURL("image/jpeg", 0.7) // מקודדת תמונה ל-JPEG ודוחסת ל-70%
+  //       .replace(/^data:image\/jpeg;base64,/, "");
+  //     // העלאה לג'מיני
+  //     // await analyzeCaptchaWithGemini(base64Data);
+  //     setCroppedImageData(croppedImageData);
+
+  //     const prompt = "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
+  //     // שליחת התמונה לשרת (אם יש צורך)
+  //     // const response = await axios.post("http://localhost:5000/upload-captcha-image", { image: imageData });
+  //     // console.log("Server response:", response.data);
+  //     // alert(response.data.message || "Captcha image sent successfully!");
+
+  //     // שליחת התמונה והפרומפט לשרת
+  //     setLoading(true); // מצב טעינה
+  //     setError(null); // איפוס שגיאות
+  //     setGeminiResponse(null); // איפוס תוצאה
+
+
+
+  //     try {
+
+  //       const response = await axios.post("http://localhost:5000/analyzeCaptcha", {
+  //         imageBase64: croppedImageData,
+  //         prompt,
+  //       });
+
+  //       setLoading(false);
+
+  //       if (response.data.success) {
+  //         setGeminiResponse(response.data.data); // שמירת התשובה מגימיני
+  //         console.log("Gemini Response:", response.data.data);
+  //         console.log("response.data", response.data)
+  //       } else {
+  //         setError(response.data.message || "Failed to process captcha.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error sending captcha to server:", error);
+  //       setLoading(false);
+  //       setError("An error occurred while processing the captcha.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error capturing or sending captcha image:", error);
+  //     setLoading(false);
+  //     setError("An error occurred while capturing the captcha.");
+  //   }
+
+  // };
+
+  //מצלם מסך אוטומטית בצד שרת
+  const captureScreenshot = async () => {
+    console.log("צילום מסך על ידי השרת");
+    const url = "http://localhost:3000/"; // ה-URL שברצונך לצלם
 
     try {
-      // בקשת הרשאה ללכידת המסך
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { mediaSource: "screen" },
-      });
-
-      // יצירת אלמנט וידאו כדי לקבל את זרם המסך
-      const video = document.createElement("video");
-      video.srcObject = stream;
-
-      await video.play();
-
-      // הוספת השהיה של 2 שניות כדי לאפשר לחלון הבחירה להיעלם
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // יצירת canvas ולכידת המסך
-      const canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // עצירת הזרם כדי למנוע דליפת משאבים
-      stream.getTracks().forEach((track) => track.stop());
-
-      //לפי המידות של התמונה שגיפיטי סימן לי!!!
-      // // הגדרת האזור לחיתוך (לפי פיקסלים)
-      // const clipX = 250; // התחלת X
-      // const clipY = 0; // התחלת Y
-      // const clipWidth = 750; // רוחב החיתוך
-      // const clipHeight = 800; // גובה החיתוך
-
-      // הגדרת האזור לחיתוך (לפי פיקסלים)
-      const clipX = 380; // התחלת X
-      const clipY = 130; // התחלת Y
-      const clipWidth = 510; // רוחב החיתוך
-      const clipHeight = 820; // גובה החיתוך
-
-      // יצירת canvas חדש לחיתוך
-      const croppedCanvas = document.createElement("canvas");
-      croppedCanvas.width = clipWidth;
-      croppedCanvas.height = clipHeight;
-
-      const croppedCtx = croppedCanvas.getContext("2d");
-      croppedCtx.drawImage(
-        canvas,
-        clipX,
-        clipY,
-        clipWidth,
-        clipHeight,
-        0,
-        0,
-        clipWidth,
-        clipHeight
+      const response = await axios.post(
+        "http://localhost:5000/screenshot/",
+        { url }, // שליחת ה-URL לשרת
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-
-      // // המרת התמונה לנתון Base64
-      // const imageData = canvas.toDataURL("image/png");
-
-      // // הצגת התמונה שנלקחה (לצורך הדגמה)
-      // const imageElement = document.createElement("img");
-      // imageElement.src = imageData; // הגדרת מקור התמונה כנתון Base64 שהתקבל
-      // document.body.appendChild(imageElement); // הוספת התמונה לדף
-
-      // // המרת התמונה החדשה לנתון Base64
-      // const croppedImageData = croppedCanvas.toDataURL("image/png");
-
-      // // הצגת התמונה שנחתכה (לצורך הדגמה)
-      // const croppedImageElement = document.createElement("img");
-      // croppedImageElement.src = croppedImageData;
-      // document.body.appendChild(croppedImageElement);
-
-      // const croppedImageData = croppedCanvas.toDataURL("image/png").replace(/^data:image\/png;base64,/, "");
-
-      const croppedImageData = croppedCanvas.toDataURL("image/jpeg", 0.7) // מקודדת תמונה ל-JPEG ודוחסת ל-70%
-        .replace(/^data:image\/jpeg;base64,/, "");
-      // העלאה לג'מיני
-      // await analyzeCaptchaWithGemini(base64Data);
-
-      // שליחת התמונה לשרת (אם יש צורך)
-      // const response = await axios.post("http://localhost:5000/upload-captcha-image", { image: imageData });
-      // console.log("Server response:", response.data);
-      // alert(response.data.message || "Captcha image sent successfully!");
-
+      if (response.data.success) {
+        console.log("Screenshot successfully captured and uploaded!");
+        console.log("Response from server:", response.data.filePath);
+        alert("Screenshot captured and uploaded successfully!");
+        //זימון פונקציה ששולחת לג'מיני תמונה ופרומפט
+        sendCaptchaAndPromptToGemini(response.data.filePath);
+      } else {
+        console.error("Error:", response.data.message);
+        alert(`Failed to capture screenshot: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error sending request to server:", error);
+      alert("An error occurred. Please check the console for details.");
+    }
+  };
+//פונקציה ששולחת לגמיני נתיב של תמונה ופרומפט ומקבלת תגובה
+  const sendCaptchaAndPromptToGemini = async (filePath) => {
+    console.log("sendCaptchaAndPromptToGemini");
+    try {
       // שליחת התמונה והפרומפט לשרת
       setLoading(true); // מצב טעינה
       setError(null); // איפוס שגיאות
       setGeminiResponse(null); // איפוס תוצאה
-
-
-      const prompt = "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
-
+      // const prompt1 =
+      //   "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
+      //   const prompt = "There are nine or sixteen squres, explain what in each squre, and in which squre there is what the captcha asks to select";
+      const prompt =
+        "There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select.";
       try {
-
-        const response = await axios.post("http://localhost:5000/analyzeCaptcha", {
-          imageBase64: croppedImageData,
-          prompt,
-        });
-
+        const response = await axios.post(
+          "http://localhost:5000/analyzeCaptcha",
+          {
+            filePath,
+            prompt,
+          }
+        );
         setLoading(false);
 
         if (response.data.success) {
           setGeminiResponse(response.data.data); // שמירת התשובה מגימיני
           console.log("Gemini Response:", response.data.data);
-          console.log("response.data", response.data)
+          console.log("response.data", response.data);
         } else {
           setError(response.data.message || "Failed to process captcha.");
         }
@@ -152,9 +230,35 @@ const App = () => {
       setLoading(false);
       setError("An error occurred while capturing the captcha.");
     }
-
   };
 
+
+  //קשור לכפתור של הקפצ'ה הצליח / לא הצליח
+  const handleSaveResult = async () => {
+    if (captchaSuccess === null) {
+      alert("Please select whether the CAPTCHA was successful or not.");
+      return;
+    }
+
+    try {
+      const payload = {
+        captchaSuccess,
+        geminiResponse,
+        croppedImageData,
+      };
+
+      const response = await axios.post("http://localhost:5000/captchaData", payload);
+
+      if (response.data.success) {
+        alert("Result saved successfully!");
+      } else {
+        alert("Failed to save the result.");
+      }
+    } catch (error) {
+      console.error("Error saving the result:", error);
+      alert("An error occurred while saving the result.");
+    }
+  };
 
 
   const handleSendCaptcha = async () => {
@@ -217,7 +321,8 @@ const App = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <div style={{ textAlign: "center", marginTop: "114px" }}>
+      <NavigationMenu />
       <h1>Google reCAPTCHA V2 Demo</h1>
       <p>Complete the CAPTCHA below:</p>
       <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
@@ -251,12 +356,13 @@ const App = () => {
           borderRadius: "5px",
         }}
       >
-        Send Captcha to Gemini AI
+        כפתור זמני!!
       </button>
       <button
         onClick={() => {
           setTimeout(() => {
-            captureAndSendCaptcha();
+          //  captureAndSendCaptcha();
+          captureScreenshot();
           }, 3000); // הפעלה לאחר 2 שניות
         }}
 
@@ -282,17 +388,43 @@ const App = () => {
           <p>{geminiResponse}</p>
         </div>
       )}
+
       {verificationResult && (
         <p style={{ marginTop: "20px" }}>{verificationResult}</p>
       )}
       <p>Button clicked: {buttonClickCount} times</p> {/* הצגת מספר הלחיצות */}
-
+      {/*הוספה שקשורה להצליח לא הצליח*/}
+      <div style={{ marginTop: "20px" }}>
+        <p>Was the CAPTCHA successful?</p>
+        <label>
+          <input
+            type="radio"
+            value="true"
+            checked={captchaSuccess === true}
+            onChange={() => setCaptchaSuccess(true)}
+          />
+          Yes
+        </label>
+        <label style={{ marginLeft: "20px" }}>
+          <input
+            type="radio"
+            value="false"
+            checked={captchaSuccess === false}
+            onChange={() => setCaptchaSuccess(false)}
+          />
+          No
+        </label>
+        <br />
+        <button onClick={handleSaveResult} style={{ marginTop: "10px" }}>
+          Submit Result
+        </button>
+      </div>
 
     </div>
   );
 };
 
-export default App;
+export default CaptchaTest;
 // import React, { useState, useEffect } from "react";
 // import ReCAPTCHA from "react-google-recaptcha";
 // import axios from "axios";

@@ -79,8 +79,9 @@ connectDB();
 // ייבוא הנתיבים
 const captchaRoute = require("./routes/captchaRoute");
 const pictureTestRoute = require("./routes/pictureTestRoute");
-//const screenshotUploadRoute = require("./routes/screenshotUploadRoute");
+const screenshotUploadRoute = require("./routes/screenshotUploadRoute");
 const imageProcessingRoute = require("./routes/imageProcessingRoute");
+const captchaData = require("./routes/captchaDataRoute")
 
 const app = express();
 
@@ -93,8 +94,12 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 // שימוש בנתיבים
 // app.use("/verify-captcha", captchaRoute);
 app.use("/pictureTest", pictureTestRoute);
-// app.use("/screenshot", screenshotUploadRoute);
 app.use("/analyzeCaptcha", imageProcessingRoute);
+app.use("/captchaData", captchaData)
+//צילום על ידי השרת
+app.use("/screenshot", screenshotUploadRoute);
+
+
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

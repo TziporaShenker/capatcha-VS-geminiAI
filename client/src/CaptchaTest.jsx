@@ -61,13 +61,6 @@ const CaptchaTest = () => {
   //     // עצירת הזרם כדי למנוע דליפת משאבים
   //     stream.getTracks().forEach((track) => track.stop());
 
-  //     //לפי המידות של התמונה שגיפיטי סימן לי!!!
-  //     // // הגדרת האזור לחיתוך (לפי פיקסלים)
-  //     // const clipX = 250; // התחלת X
-  //     // const clipY = 0; // התחלת Y
-  //     // const clipWidth = 750; // רוחב החיתוך
-  //     // const clipHeight = 800; // גובה החיתוך
-
   //     // הגדרת האזור לחיתוך (לפי פיקסלים)
   //     const clipX = 380; // התחלת X
   //     const clipY = 130; // התחלת Y

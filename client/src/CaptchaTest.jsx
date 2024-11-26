@@ -191,7 +191,7 @@ const CaptchaTest = () => {
       setLoading(true); // מצב טעינה
       setError(null); // איפוס שגיאות
       setGeminiResponse(null); // איפוס תוצאה
-      // const prompt1 =
+      // const prompt =
       //   "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
       //   const prompt = "There are nine or sixteen squres, explain what in each squre, and in which squre there is what the captcha asks to select";
       const prompt =

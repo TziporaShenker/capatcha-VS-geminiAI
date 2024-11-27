@@ -30,7 +30,9 @@ const processImage = async (req, res) => {
     res.status(200).json({ success: true, data: geminiResponse });
   } catch (error) {
     console.error("Error processing image with Gemini API:", error);
-    res.status(500).json({ success: false, message: "Failed to process image" });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to process image" });
   }
 };
 

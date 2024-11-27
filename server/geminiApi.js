@@ -53,7 +53,7 @@ function base64ToGenerativePart(base64Data, mimeType) {
 }
 
 async function analyzeCaptchaWithGemini(filePath, prompt) {
-  console.log("analyzeCaptchaWithGemini");
+  console.log("analyzeCaptchaWithGemini", filePath, prompt);
   try {
     // יצירת אובייקט Google Generative AI
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);

@@ -93,8 +93,11 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // שימוש בנתיבים
 // app.use("/verify-captcha", captchaRoute);
+//שמירת נתונים חלקיים לשם בדטה בייס
 app.use("/pictureTest", pictureTestRoute);
+//שליחת תמונה ופרומפט לג'מיני
 app.use("/analyzeCaptcha", imageProcessingRoute);
+//שמירת נתונים מלאים בדטה בייס
 app.use("/captchaData", captchaData)
 //צילום על ידי השרת
 app.use("/screenshot", screenshotUploadRoute);

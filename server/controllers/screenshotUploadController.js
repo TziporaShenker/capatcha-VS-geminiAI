@@ -23,17 +23,17 @@ const captureAndUpload = async (req, res) => {
       fs.mkdirSync(dir, { recursive: true });
     }
 
-    // // 4. חיתוך התמונה ושמירה ישירות כקובץ פיזי
-    // const clipX = 460; // התחלת X
-    // const clipY = 150; // התחלת Y
-    // const clipWidth = 600; // רוחב החיתוך
-    // const clipHeight = 860; // גובה החיתוך
-
     // 4. חיתוך התמונה ושמירה ישירות כקובץ פיזי
-    const clipX = 380; // התחלת X
-    const clipY = 120; // התחלת Y
-    const clipWidth = 550; // רוחב החיתוך
-    const clipHeight = 800; // גובה החיתוך
+    const clipX = 500; // התחלת X
+    const clipY = 150; // התחלת Y
+    const clipWidth = 600; // רוחב החיתוך
+    const clipHeight = 860; // גובה החיתוך
+
+    // // 4. חיתוך התמונה ושמירה ישירות כקובץ פיזי
+    // const clipX = 380; // התחלת X
+    // const clipY = 120; // התחלת Y
+    // const clipWidth = 550; // רוחב החיתוך
+    // const clipHeight = 800; // גובה החיתוך
     
     await sharp(img)
       .extract({

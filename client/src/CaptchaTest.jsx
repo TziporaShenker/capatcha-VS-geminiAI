@@ -17,6 +17,7 @@ const CaptchaTest = () => {
   const [prompt, setPrompt] = useState("There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select.");
   const [geminiResponse, setGeminiResponse] = useState(null); // לאחסון התשובה מגימיני
   const [isCaptchaSuccessful, setIsCaptchaSuccessful] = useState(null); // משתנה לרדיו בוטון
+  
 
   // Google reCAPTCHA Site Key (תחליפי למפתח שלך)
   const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";

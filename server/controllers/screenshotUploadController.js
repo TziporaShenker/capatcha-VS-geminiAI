@@ -1,3 +1,4 @@
+require("dotenv").config();
 const screenshot = require("screenshot-desktop");
 const fs = require("fs");
 const path = require("path");
@@ -22,25 +23,13 @@ const captureAndUpload = async (req, res) => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-
-    // 4. חיתוך התמונה ושמירה ישירות כקובץ פיזי
-    const clipX = 500; // התחלת X
-    const clipY = 150; // התחלת Y
-    const clipWidth = 600; // רוחב החיתוך
-    const clipHeight = 860; // גובה החיתוך
-
-    // // 4. חיתוך התמונה ושמירה ישירות כקובץ פיזי
-    // const clipX = 380; // התחלת X
-    // const clipY = 120; // התחלת Y
-    // const clipWidth = 550; // רוחב החיתוך
-    // const clipHeight = 800; // גובה החיתוך
     
     await sharp(img)
       .extract({
-        left: clipX,
-        top: clipY,
-        width: clipWidth,
-        height: clipHeight,
+        left: Number(process.env.CLIP_X),
+        top: Number(process.env.CLIP_Y),
+        width: Number(process.env.CLIP_WIDTH),
+        height: Number(process.env.CLIP_HEIGHT),
       })
       .toFile(croppedImagePath);
 

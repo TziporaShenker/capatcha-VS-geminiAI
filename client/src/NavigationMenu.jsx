@@ -8,6 +8,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
+import logo from './logo.jpg';
+
+
+
 
 const NavigationMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -32,22 +36,31 @@ const NavigationMenu = () => {
         borderBottom: "1px solid #ddd",
       }}
     >
-      <Toolbar style={{ justifyContent: "space-between", direction: "rtl" }}>
-        {/* לוגו */}
+      <Toolbar
+        style={{
+          display: "flex",
+          justifyContent: "space-between", // מפזר בין הלוגו לניווט
+          alignItems: "center", // מיושר אנכית
+        }}
+      >
+        {/* לוגו בצד שמאל */}
         <Link
           to="/"
           style={{
             textDecoration: "none",
-            color: "#333",
-            fontSize: "22px",
-            fontWeight: "bold",
-            fontFamily: "'Roboto', sans-serif", // עדכון הפונט
           }}
         >
-          CaptchaApp
+          <img
+            src={logo} // הנתיב לתמונה שלך
+            alt="CaptchaApp"
+            style={{
+              height: "40px", // גובה התמונה
+              objectFit: "contain", // התאמת התמונה
+            }}
+          />
         </Link>
 
-        {/* ניווט */}
+        {/* ניווט בצד ימין */}
         {isMobile ? (
           <div>
             <IconButton onClick={handleMenu}>
@@ -63,22 +76,22 @@ const NavigationMenu = () => {
                 to="/captchaTest"
                 onClick={handleClose}
                 style={{
-                  fontFamily: "'Roboto', sans-serif", // עדכון פונט לתפריט בנייד
+                  fontFamily: "'Roboto', sans-serif",
                   fontSize: "16px",
                 }}
               >
-                captcha test
+                Captcha Test
               </MenuItem>
               <MenuItem
                 component={Link}
                 to="/captchaTable"
                 onClick={handleClose}
                 style={{
-                  fontFamily: "'Roboto', sans-serif", // עדכון פונט לתפריט בנייד
+                  fontFamily: "'Roboto', sans-serif",
                   fontSize: "16px",
                 }}
               >
-                captcha table
+                Analysis Results
               </MenuItem>
             </Menu>
           </div>
@@ -95,10 +108,10 @@ const NavigationMenu = () => {
                   location.pathname === "/captchaTest"
                     ? "2px solid #5b9efc"
                     : "none",
-                fontFamily: "'Roboto', sans-serif", // פונט מותאם
+                fontFamily: "'Roboto', sans-serif",
               }}
             >
-              captcha test
+              Captcha Test
             </Link>
             <Link
               to="/captchaTable"
@@ -111,15 +124,17 @@ const NavigationMenu = () => {
                   location.pathname === "/captchaTable"
                     ? "2px solid #5b9efc"
                     : "none",
-                fontFamily: "'Roboto', sans-serif", // פונט מותאם
+                fontFamily: "'Roboto', sans-serif",
               }}
             >
-              captcha table
+              Analysis Results
             </Link>
           </div>
         )}
       </Toolbar>
     </AppBar>
+
+
   );
 };
 

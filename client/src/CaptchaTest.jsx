@@ -215,145 +215,6 @@ const CaptchaTest = () => {
   };
 
   return (
-    // <Box
-    //   sx={{
-    //     textAlign: "center",
-    //     padding: "40px",
-    //     paddingTop: "100px", // להזיז את התוכן למטה
-    //     backgroundColor: "#f0f4f8",
-    //     minHeight: "100vh",
-    //   }}
-    // >
-    //   <NavigationMenu />
-  
-    //   <Typography variant="h4" gutterBottom>
-    //     Google reCAPTCHA Test
-    //   </Typography>
-  
-    //   <Typography variant="body1" gutterBottom sx={{ marginBottom: "20px" }}>
-    //     Please complete the CAPTCHA below:
-    //   </Typography>
-  
-    //   <Box
-    //     sx={{
-    //       display: "flex",
-    //       justifyContent: "space-between", // הקפצ'ה בצד ימין, כפתורים במרכז
-    //       alignItems: "center", // יישור בגובה
-    //       marginBottom: "30px", // מרווח מתחת לאזור
-    //       width: "100%", // יתפוס את כל הרוחב
-    //     }}
-    //   >
-    //     {/* קופסה ריקה עבור יישור מרווח משמאל */}
-    //     <Box sx={{ flex: 1 }} />
-  
-    //     {/* הכפתורים במרכז */}
-    //     <Box
-    //       sx={{
-    //         display: "flex",
-    //         flexDirection: "row", // הכפתורים יופיעו אחד ליד השני
-    //         gap: "10px", // מרווח בין הכפתורים
-    //       }}
-    //     >
-    //       <Button
-    //         variant="contained"
-    //         color="primary"
-    //         onClick={handleSubmit}
-    //         disabled={!isCaptchaSuccessful}
-    //       >
-    //         Next Page
-    //       </Button>
-    //       <Button
-    //         variant="contained"
-    //         sx={{
-    //           backgroundColor: "#5b9efc",
-    //           "&:hover": {
-    //             backgroundColor: "#4687e6",
-    //           },
-    //         }}
-    //         onClick={() => {
-    //           setTimeout(() => {
-    //             captureScreenshot();
-    //           }, 3000); // הפעלה לאחר 3 שניות
-    //         }}
-    //       >
-    //         Capture Screenshot
-    //       </Button>
-    //     </Box>
-  
-    //     {/* הקפצ'ה בצד ימין */}
-    //     <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" , marginTop: "130px" }}>
-    //       <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
-    //     </Box>
-    //   </Box>
-  
-    //   {loading && (
-    //     <Box mt={4}>
-    //       <CircularProgress />
-    //       <Typography variant="body2" sx={{ marginTop: "10px" }}>
-    //         Processing...
-    //       </Typography>
-    //     </Box>
-    //   )}
-  
-    //   {error && (
-    //     <Typography variant="body2" color="error" mt={2}>
-    //       {error}
-    //     </Typography>
-    //   )}
-  
-    //   {verificationResult && (
-    //     <Typography variant="h6" color="success" mt={2}>
-    //       {verificationResult}
-    //     </Typography>
-    //   )}
-  
-    //   {geminiResponse && (
-    //     <Paper
-    //       elevation={1}
-    //       sx={{
-    //         padding: "20px",
-    //         marginTop: "30px",
-    //         backgroundColor: "#ffffff",
-    //         textAlign: "left",
-    //         maxWidth: "500px", // צמצום הרוחב של התשובה
-    //         margin: "auto",
-    //       }}
-    //     >
-    //       <Typography variant="h6">Gemini Response:</Typography>
-    //       <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
-    //         {geminiResponse}
-    //       </Typography>
-    //     </Paper>
-    //   )}
-  
-    //   <Box mt={5}>
-    //     <Typography variant="body1" gutterBottom>
-    //       Was the CAPTCHA successful?
-    //     </Typography>
-    //     <Box display="flex" justifyContent="center" mt={2}>
-    //       <RadioGroup
-    //         row
-    //         value={isCaptchaSuccessful}
-    //         onChange={(e) => setIsCaptchaSuccessful(e.target.value === "true")}
-    //       >
-    //         <FormControlLabel value="true" control={<Radio />} label="Yes" />
-    //         <FormControlLabel value="false" control={<Radio />} label="No" />
-    //       </RadioGroup>
-    //     </Box>
-    //     <Button
-    //       variant="outlined"
-    //       color="primary"
-    //       onClick={() => {
-    //         alert("Result submitted!");
-    //         handleSaveResult();
-    //       }}
-    //       sx={{ mt: 3 }}
-    //       disabled={isCaptchaSuccessful === null}
-    //     >
-    //       Submit Result
-    //     </Button>
-    //   </Box>
-    // </Box>
     <Box
       sx={{
         textAlign: "center",
@@ -486,7 +347,6 @@ const CaptchaTest = () => {
           variant="outlined"
           color="primary"
           onClick={() => {
-            alert("Result submitted!");
             handleSaveResult();
           }}
           sx={{ mt: 3 }}
@@ -691,3 +551,145 @@ export default CaptchaTest;
 //   }
 
 // };
+
+
+//גירסת עיברית לעיצוב
+// <Box
+    //   sx={{
+    //     textAlign: "center",
+    //     padding: "40px",
+    //     paddingTop: "100px", // להזיז את התוכן למטה
+    //     backgroundColor: "#f0f4f8",
+    //     minHeight: "100vh",
+    //   }}
+    // >
+    //   <NavigationMenu />
+  
+    //   <Typography variant="h4" gutterBottom>
+    //     Google reCAPTCHA Test
+    //   </Typography>
+  
+    //   <Typography variant="body1" gutterBottom sx={{ marginBottom: "20px" }}>
+    //     Please complete the CAPTCHA below:
+    //   </Typography>
+  
+    //   <Box
+    //     sx={{
+    //       display: "flex",
+    //       justifyContent: "space-between", // הקפצ'ה בצד ימין, כפתורים במרכז
+    //       alignItems: "center", // יישור בגובה
+    //       marginBottom: "30px", // מרווח מתחת לאזור
+    //       width: "100%", // יתפוס את כל הרוחב
+    //     }}
+    //   >
+    //     {/* קופסה ריקה עבור יישור מרווח משמאל */}
+    //     <Box sx={{ flex: 1 }} />
+  
+    //     {/* הכפתורים במרכז */}
+    //     <Box
+    //       sx={{
+    //         display: "flex",
+    //         flexDirection: "row", // הכפתורים יופיעו אחד ליד השני
+    //         gap: "10px", // מרווח בין הכפתורים
+    //       }}
+    //     >
+    //       <Button
+    //         variant="contained"
+    //         color="primary"
+    //         onClick={handleSubmit}
+    //         disabled={!isCaptchaSuccessful}
+    //       >
+    //         Next Page
+    //       </Button>
+    //       <Button
+    //         variant="contained"
+    //         sx={{
+    //           backgroundColor: "#5b9efc",
+    //           "&:hover": {
+    //             backgroundColor: "#4687e6",
+    //           },
+    //         }}
+    //         onClick={() => {
+    //           setTimeout(() => {
+    //             captureScreenshot();
+    //           }, 3000); // הפעלה לאחר 3 שניות
+    //         }}
+    //       >
+    //         Capture Screenshot
+    //       </Button>
+    //     </Box>
+  
+    //     {/* הקפצ'ה בצד ימין */}
+    //     <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" , marginTop: "130px" }}>
+    //       <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
+    //     </Box>
+    //   </Box>
+  
+    //   {loading && (
+    //     <Box mt={4}>
+    //       <CircularProgress />
+    //       <Typography variant="body2" sx={{ marginTop: "10px" }}>
+    //         Processing...
+    //       </Typography>
+    //     </Box>
+    //   )}
+  
+    //   {error && (
+    //     <Typography variant="body2" color="error" mt={2}>
+    //       {error}
+    //     </Typography>
+    //   )}
+  
+    //   {verificationResult && (
+    //     <Typography variant="h6" color="success" mt={2}>
+    //       {verificationResult}
+    //     </Typography>
+    //   )}
+  
+    //   {geminiResponse && (
+    //     <Paper
+    //       elevation={1}
+    //       sx={{
+    //         padding: "20px",
+    //         marginTop: "30px",
+    //         backgroundColor: "#ffffff",
+    //         textAlign: "left",
+    //         maxWidth: "500px", // צמצום הרוחב של התשובה
+    //         margin: "auto",
+    //       }}
+    //     >
+    //       <Typography variant="h6">Gemini Response:</Typography>
+    //       <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
+    //         {geminiResponse}
+    //       </Typography>
+    //     </Paper>
+    //   )}
+  
+    //   <Box mt={5}>
+    //     <Typography variant="body1" gutterBottom>
+    //       Was the CAPTCHA successful?
+    //     </Typography>
+    //     <Box display="flex" justifyContent="center" mt={2}>
+    //       <RadioGroup
+    //         row
+    //         value={isCaptchaSuccessful}
+    //         onChange={(e) => setIsCaptchaSuccessful(e.target.value === "true")}
+    //       >
+    //         <FormControlLabel value="true" control={<Radio />} label="Yes" />
+    //         <FormControlLabel value="false" control={<Radio />} label="No" />
+    //       </RadioGroup>
+    //     </Box>
+    //     <Button
+    //       variant="outlined"
+    //       color="primary"
+    //       onClick={() => {
+    //         alert("Result submitted!");
+    //         handleSaveResult();
+    //       }}
+    //       sx={{ mt: 3 }}
+    //       disabled={isCaptchaSuccessful === null}
+    //     >
+    //       Submit Result
+    //     </Button>
+    //   </Box>
+    // </Box>

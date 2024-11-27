@@ -14,6 +14,7 @@ const screenshotUploadRoute = require("./routes/screenshotUploadRoute");
 const imageProcessingRoute = require("./routes/imageProcessingRoute");
 const captchaData = require("./routes/captchaDataRoute")
 const captchaTableRoute = require("./routes/captchaTableRoute")
+const analyzeData = require("./routes/analyzeDataRoute")
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.use("/captchaData", captchaData)
 app.use("/screenshot", screenshotUploadRoute);
 app.use("/captchaTable", captchaTableRoute);
 app.use("/screenshots", express.static(path.join(__dirname, "screenshots")));
+app.use("/analyzeData", analyzeData);
+
 
 
 

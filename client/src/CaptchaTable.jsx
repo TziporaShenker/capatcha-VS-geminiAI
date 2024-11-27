@@ -11,18 +11,20 @@ import {
   Paper,
   Typography,
   Chip,
+  Box
 } from "@mui/material";
 
 const CaptchaTable = () => {
   const [captchaResults, setCaptchaResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [geminiAnalysis, setGeminiAnalysis] = useState(null); // אחסון תוצאות מג'מיני
 
   useEffect(() => {
     const fetchCaptchaResults = async () => {
       try {
         const response = await axios.get("http://localhost:5000/captchaTable");
+        console.log(response.data);
         setCaptchaResults(response.data);
         setLoading(false);
       } catch (err) {
@@ -30,9 +32,55 @@ const CaptchaTable = () => {
         setLoading(false);
       }
     };
-
     fetchCaptchaResults();
+    console.log(captchaResults);
   }, []);
+
+  useEffect(() => {
+    const analyzeResults = async () => {
+      try {
+        const analysis = await sendDataToGemini(captchaResults);
+        setGeminiAnalysis(analysis?.data || null); // שמירה של תוצאות הניתוח
+      } catch (error) {
+        console.error("Error analyzing results:", error);
+      }
+    };
+
+    if (captchaResults.length > 0) {
+      analyzeResults();
+    }
+  }, [captchaResults]);
+
+  const sendDataToGemini = async (captchaResults) => {
+    try {
+      // בדיקה אם captchaResults קיים ומכיל נתונים
+      if (!captchaResults || captchaResults.length === 0) {
+        console.error("No captcha results available for analysis.");
+        return null; // או אפשר להחזיר הודעה אחרת
+      }
+
+      // חילוץ רק הערכים הבוליאניים מ-captchaResults
+      const successData = captchaResults.map((result) => result.isCaptchaSuccessful);
+
+      const prompt = `
+      Analyze the following dataset, which contains boolean values indicating success (true) or failure (false).
+      Calculate and return only the percentage of successes and the percentage of failures, without explaining the method.
+    
+      Data: ${JSON.stringify(successData)}
+    `;
+
+      const response = await axios.post("http://localhost:5000/analyzeData", {
+        successData,
+        prompt,
+      });
+
+      console.log("Gemini Analysis Result:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error sending data to Gemini:", error);
+      throw error;
+    }
+  };
 
   if (loading) return <Typography>Loading...</Typography>;
   if (error) return <Typography color="error">{error}</Typography>;
@@ -47,6 +95,26 @@ const CaptchaTable = () => {
           overflowX: "auto", // פתרון לגלילה בטבלאות גדולות
         }}
       >
+        {/* אחוזי הצלחה וכישלון */}
+        {geminiAnalysis && (
+          <Box
+            sx={{
+              marginTop: "20px",
+              padding: "20px",
+              backgroundColor: "#f5f5f5",
+              borderRadius: "8px",
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+              textAlign: "center", // מיקום טקסט במרכז
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              Analysis Results
+            </Typography>
+            <Typography variant="body1">
+              {geminiAnalysis}
+            </Typography>
+          </Box>
+        )}
         <TableContainer
           component={Paper}
           style={{
@@ -128,7 +196,7 @@ const CaptchaTable = () => {
                       src={`http://localhost:5000/${result.filePath}`}
                       alt="Captcha"
                       style={{
-                        maxWidth: "160px",
+                        maxWidth: "180px",
                         height: "auto",
                         borderRadius: "8px",
                         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
@@ -167,6 +235,7 @@ const CaptchaTable = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
       </div>
     </>
   );

@@ -4,7 +4,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import "./App.css";
 import CaptchaTest from "./CaptchaTest";
 import CaptchaTable from "./CaptchaTable";
 

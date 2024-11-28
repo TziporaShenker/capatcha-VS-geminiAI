@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import CaptchaTest from "./CaptchaTest";
 import CaptchaTable from "./CaptchaTable";
+import WelcomePage from "./WelcomePage"; // העמוד החדש
+
 
 
 const AppContent = () => {
@@ -14,6 +16,7 @@ const AppContent = () => {
       <Route path="/" element={<Navigate to="/captchaTest" />} />
       <Route path="/captchaTest" element={<CaptchaTest />} />
       <Route path="/captchaTable" element={<CaptchaTable />} />
+      <Route path="/welcome" element={<WelcomePage />} />
     </Routes>
   );
 };

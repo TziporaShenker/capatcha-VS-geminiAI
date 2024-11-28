@@ -26,8 +26,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 const path = require("path");
 
 
-// שימוש בנתיבים
-// app.use("/verify-captcha", captchaRoute);
+
 //שמירת נתונים חלקיים לשם בדטה בייס
 app.use("/pictureTest", pictureTestRoute);
 //שליחת תמונה ופרומפט לג'מיני

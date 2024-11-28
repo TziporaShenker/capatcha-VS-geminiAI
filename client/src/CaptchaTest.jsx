@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useNavigate } from "react-router-dom"; 
 import NavigationMenu from "./NavigationMenu";
 import axios from "axios";
 import { Box, Typography, Button, CircularProgress, TextField, Radio, RadioGroup, FormControlLabel, Paper } from "@mui/material";
@@ -8,30 +9,54 @@ const CaptchaTest = () => {
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("1");
   const [verificationResult, setVerificationResult] = useState("");
-  const [buttonClickCount, setButtonClickCount] = useState(0); // משתנה לספירת הלחיצות
-  const [buttonState, setButtonState] = useState(0); // משתנה שמתחיל ב-0 ומשתנה ל-1 לאחר לחיצה
+  const [buttonClickCount, setButtonClickCount] = useState(0); 
+  const [buttonState, setButtonState] = useState(0); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  //data to send to server
   const [filePath, setFilePath] = useState(null);
-  const [prompt, setPrompt] = useState("There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select.");
-  const [geminiResponse, setGeminiResponse] = useState(null); // לאחסון התשובה מגימיני
-  const [isCaptchaSuccessful, setIsCaptchaSuccessful] = useState(null); // משתנה לרדיו בוטון
+  const [prompt, setPrompt] = useState(  `
+    The image is divided into squares, either 9 (3x3) or 16 (4x4), numbered from top-left to bottom-right. The numbering starts at 1 and proceeds row by row.
+    
+    Your task:
+    1. Describe the content of each square briefly, like "tree", "road", "car".
+    2. Identify all squares containing the target object (e.g., "traffic lights"), even if it is only partially visible.
+    3. Clearly list the numbers of the squares to select.
+    
+    Answer in this exact format:
+    Descriptions:
+    Square 1: [description]
+    Square 2: [description]
+    ... (continue for all squares)
+    
+    Select: [list of square numbers containing the object]
+    If the object is not present in any square, respond with: "No squares to select."
+    `);
+  const [geminiResponse, setGeminiResponse] = useState(null); 
+  const [isCaptchaSuccessful, setIsCaptchaSuccessful] = useState(null); 
+  const navigate = useNavigate(); 
 
+//prompt = "There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select."
+//prompt1 = "The image is divided into 9 or 16 squares. You need to: 1. Number the squares from left to right and top to bottom, with the top-left square being number 1. 2. Provide an accurate description of what is in each square, including small details such as partial objects or background elements (e.g., part of a traffic light pole, clouds, road). 3. Identify all squares that contain the item specified in the instruction (e.g., traffic lights or crosswalks), even if the item appears partially. 4. Clearly list the numbers of the squares to select. Use a clear response format such as: Square 1: road. Square 2: tree. Square 3: traffic light. Select squares: 3, 5, 7. If the item is not present in any square, state: No squares to select."
+// const prompt =
+      //   "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
+      //   const prompt = "There are nine or sixteen squres, explain what in each squre, and in which squre there is what the captcha asks to select";
+      // setPrompt(
+      //   "There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select."
+      // );
 
-  // Google reCAPTCHA Site Key (תחליפי למפתח שלך)
+// Google reCAPTCHA Site Key 
   const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";
 
-  // שימוש ב-useEffect עבור filePath
+  // Using useEffect for filePath
   useEffect(() => {
     if (filePath) {
       console.log("File path updated:", filePath);
       sendCaptchaAndPromptToGemini();
       // handleSaveResult();
     }
-  }, [filePath]); // מאזין לשינויים ב-filePath
+  }, [filePath]); // Listener for changes in filePath
 
-  // קריאה כשהמשתמש מסיים את מבחן ה-CAPTCHA
+ // Call when the user finishes the CAPTCHA test
   const handleCaptchaChange = (token) => {
     console.log("Captcha token:", token);
     if (token) {
@@ -43,18 +68,21 @@ const CaptchaTest = () => {
     }
   };
 
-  //מצלם מסך אוטומטית בצד שרת
+  const handleNextPage = () => {
+    if (captchaVerified) {
+      navigate("/welcome"); 
+    } else {
+      alert("Please complete the CAPTCHA first!");
+    }
+  };
+  
+  // Automatically takes a screenshot on the server side
   const captureScreenshot = async () => {
-    console.log("צילום מסך על ידי השרת");
-    // setFilePath(null);
-    // setGeminiResponse(null);
-    // setIsCaptchaSuccessful(null)
-    const url = "http://localhost:3000/"; // ה-URL שברצונך לצלם
-
+    const url = "http://localhost:3000/"; // The URL you want to capture
     try {
       const response = await axios.post(
         "http://localhost:5000/screenshot/",
-        { url }, // שליחת ה-URL לשרת
+        { url }, // Sending the URL to the server
         {
           headers: {
             "Content-Type": "application/json",
@@ -63,13 +91,8 @@ const CaptchaTest = () => {
       );
 
       if (response.data.success) {
-        console.log("Screenshot successfully captured and uploaded!");
-        console.log("Response from server:", response.data.filePath);
         alert("Screenshot captured and uploaded successfully!");
-        //זימון פונקציה ששולחת לג'מיני תמונה ופרומפט
         setFilePath(response.data.filePath);
-        // sendCaptchaAndPromptToGemini(response.data.filePath)
-        // sendCaptchaAndPromptToGemini();
       } else {
         console.error("Error:", response.data.message);
         alert(`Failed to capture screenshot: ${response.data.message}`);
@@ -79,23 +102,14 @@ const CaptchaTest = () => {
       alert("An error occurred. Please check the console for details.");
     }
   };
-  //פונקציה ששולחת לגמיני נתיב של תמונה ופרומפט ומקבלת תגובה
+
+ // A function that sends an image path and a prompt to Gemini and receives a response
   const sendCaptchaAndPromptToGemini = async () => {
-    console.log("sendCaptchaAndPromptToGemini");
     try {
-      // שליחת התמונה והפרומפט לשרת
-      // setPrompt(null);
-      setLoading(true); // מצב טעינה
-      setError(null); // איפוס שגיאות
-      setGeminiResponse(null); // איפוס תוצאה
-      // const prompt =
-      //   "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
-      //   const prompt = "There are nine or sixteen squres, explain what in each squre, and in which squre there is what the captcha asks to select";
-      // setPrompt(
-      //   "There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select."
-      // );
-      console.log("filePath", filePath);
-      console.log("prompt", prompt);
+      // Sending the image and prompt to the server
+      setLoading(true); // Loading state
+      setError(null); // Reset errors
+      setGeminiResponse(null); // Reset result
       try {
         const response = await axios.post(
           "http://localhost:5000/analyzeCaptcha",
@@ -107,9 +121,7 @@ const CaptchaTest = () => {
         setLoading(false);
 
         if (response.data.success) {
-          setGeminiResponse(response.data.data); // שמירת התשובה מגימיני
-          console.log("Gemini Response:", response.data.data);
-          console.log("response.data", response.data);
+          setGeminiResponse(response.data.data); // Saving the response from Gemini
         } else {
           setError(response.data.message || "Failed to process captcha.");
         }
@@ -125,7 +137,7 @@ const CaptchaTest = () => {
     }
   };
 
-  //קשור לכפתור של הקפצ'ה הצליח / לא הצליח
+  // Linked to the CAPTCHA success / failure button
   const handleSaveResult = async () => {
     if (isCaptchaSuccessful === null) {
       alert("Please select whether the CAPTCHA was successful or not.");
@@ -155,71 +167,12 @@ const CaptchaTest = () => {
     }
   };
 
-  const handleSendCaptcha = async () => {
-    try {
-      setButtonClickCount((prevCount) => prevCount + 1); // הגדלת מספר הלחיצות
-      if (buttonState === 0) {
-        setButtonState(1); // עדכון המצב ל-1 לאחר הלחיצה הראשונה
-      }
-
-      // פרמטרים לשליחה
-      const data = {
-        verified: true, // or the value you're expecting here
-        token: "abc123", // the token value that should be passed
-      };
-
-      // בקשת POST לשרת
-      const response = await axios.post(
-        "http://localhost:5000/pictureTest",
-        data
-      );
-
-      console.log(response.data.success);
-
-      if (response.data.success) {
-        alert("Captcha saved successfully!");
-      } else {
-        alert("Failed to save captcha. Try again.");
-      }
-    } catch (error) {
-      console.error("Error sending data to server:", error);
-      alert(
-        "Error occurred while sending data. Check the console for details."
-      );
-    }
-  };
-
-  // שליחת הטוקן לשרת לבדיקה
-  const handleSubmit = async () => {
-    try {
-      if (!captchaToken) {
-        alert("Please complete the CAPTCHA!");
-        return;
-      }
-      console.log("before");
-      const response = await axios.post(
-        "http://localhost:5000/verify-captcha",
-        {
-          token: captchaToken,
-        }
-      );
-      console.log("after");
-
-      setVerificationResult(
-        response.data.success ? "CAPTCHA Verified!" : "CAPTCHA Failed!"
-      );
-    } catch (error) {
-      console.error("Error verifying CAPTCHA:", error);
-      setVerificationResult("Verification failed. Please try again.");
-    }
-  };
-
   return (
     <Box
       sx={{
         textAlign: "center",
         padding: "40px",
-        paddingTop: "100px", // להזיז את התוכן למטה
+        paddingTop: "100px", 
         backgroundColor: "#f0f4f8",
         minHeight: "100vh",
       }}
@@ -237,23 +190,22 @@ const CaptchaTest = () => {
       <Box
   sx={{
     display: "flex",
-    justifyContent: "space-between", // יישור תוכן בין קצוות
-    alignItems: "center", // יישור אנכי
-    marginBottom: "30px", // מרווח מתחת לאזור
-    width: "100%", // יתפוס את כל הרוחב
+    justifyContent: "space-between", 
+    alignItems: "center", 
+    marginBottom: "30px", 
+    width: "100%",
   }}
 >
-  {/* הקפצ'ה בצד שמאל */}
+ 
   <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-start", marginTop: "130px" }}>
     <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
   </Box>
 
-  {/* הכפתורים במרכז */}
   <Box
     sx={{
       display: "flex",
-      flexDirection: "row", // הכפתורים יופיעו אחד ליד השני
-      gap: "10px", // מרווח בין הכפתורים
+      flexDirection: "row", 
+      gap: "10px", 
       justifyContent: "center",
       flex: 1,
     }}
@@ -261,7 +213,7 @@ const CaptchaTest = () => {
     <Button
       variant="contained"
       color="primary"
-      onClick={handleSubmit}
+      onClick={handleNextPage}
       disabled={!isCaptchaSuccessful}
     >
       Next Page
@@ -277,14 +229,13 @@ const CaptchaTest = () => {
       onClick={() => {
         setTimeout(() => {
           captureScreenshot();
-        }, 3000); // הפעלה לאחר 3 שניות
+        }, 3000); 
       }}
     >
       Capture Screenshot
     </Button>
   </Box>
 
-  {/* קופסה ריקה עבור יישור מרווח מימין */}
   <Box sx={{ flex: 1 }} />
 </Box>
 
@@ -318,7 +269,7 @@ const CaptchaTest = () => {
             marginTop: "30px",
             backgroundColor: "#ffffff",
             textAlign: "left",
-            maxWidth: "500px", // צמצום הרוחב של התשובה
+            maxWidth: "500px",
             margin: "auto",
           }}
         >

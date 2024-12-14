@@ -1,14 +1,7 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import CaptchaTest from "./CaptchaTest";
 import CaptchaTable from "./CaptchaTable";
-import WelcomePage from "./WelcomePage"; // העמוד החדש
-
-
+import WelcomePage from "./WelcomePage";
 
 const AppContent = () => {
   return (

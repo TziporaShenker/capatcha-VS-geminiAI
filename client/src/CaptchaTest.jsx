@@ -1,50 +1,30 @@
 import React, { useState, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import NavigationMenu from "./NavigationMenu";
 import axios from "axios";
-import { Box, Typography, Button, CircularProgress, TextField, Radio, RadioGroup, FormControlLabel, Paper } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Paper,
+} from "@mui/material";
 
 const CaptchaTest = () => {
   const [captchaVerified, setCaptchaVerified] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState("1");
-  const [verificationResult, setVerificationResult] = useState("");
-  const [buttonClickCount, setButtonClickCount] = useState(0); 
-  const [buttonState, setButtonState] = useState(0); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filePath, setFilePath] = useState(null);
-  const [prompt, setPrompt] = useState(  `
-    The image is divided into squares, either 9 (3x3) or 16 (4x4), numbered from top-left to bottom-right. The numbering starts at 1 and proceeds row by row.
-    
-    Your task:
-    1. Describe the content of each square briefly, like "tree", "road", "car".
-    2. Identify all squares containing the target object (e.g., "traffic lights"), even if it is only partially visible.
-    3. Clearly list the numbers of the squares to select.
-    
-    Answer in this exact format:
-    Descriptions:
-    Square 1: [description]
-    Square 2: [description]
-    ... (continue for all squares)
-    
-    Select: [list of square numbers containing the object]
-    If the object is not present in any square, respond with: "No squares to select."
-    `);
-  const [geminiResponse, setGeminiResponse] = useState(null); 
-  const [isCaptchaSuccessful, setIsCaptchaSuccessful] = useState(null); 
-  const navigate = useNavigate(); 
+  const [prompt, setPrompt] = useState("");
+  const [geminiResponse, setGeminiResponse] = useState(null);
+  const [isCaptchaSuccessful, setIsCaptchaSuccessful] = useState(null);
+  const navigate = useNavigate();
 
-//prompt = "There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select."
-//prompt1 = "The image is divided into 9 or 16 squares. You need to: 1. Number the squares from left to right and top to bottom, with the top-left square being number 1. 2. Provide an accurate description of what is in each square, including small details such as partial objects or background elements (e.g., part of a traffic light pole, clouds, road). 3. Identify all squares that contain the item specified in the instruction (e.g., traffic lights or crosswalks), even if the item appears partially. 4. Clearly list the numbers of the squares to select. Use a clear response format such as: Square 1: road. Square 2: tree. Square 3: traffic light. Select squares: 3, 5, 7. If the item is not present in any square, state: No squares to select."
-// const prompt =
-      //   "There are squares in the image. Number the squares from left to right, top to bottom, and explain what is in each square. Then, identify which squares to select and tell me which numbered squares to choose.";
-      //   const prompt = "There are nine or sixteen squres, explain what in each squre, and in which squre there is what the captcha asks to select";
-      // setPrompt(
-      //   "There are nine or sixteen squares arranged in rows. Number the squares from top to bottom, left to right, starting from 1. Explain what is in each square and specify which squares contain the item that appears after the words 'Select all the images of'. Finally, tell us which squares to select."
-      // );
-
-// Google reCAPTCHA Site Key 
+  // Google reCAPTCHA Site Key
   const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";
 
   // Using useEffect for filePath
@@ -52,30 +32,27 @@ const CaptchaTest = () => {
     if (filePath) {
       console.log("File path updated:", filePath);
       sendCaptchaAndPromptToGemini();
-      // handleSaveResult();
     }
   }, [filePath]); // Listener for changes in filePath
 
- // Call when the user finishes the CAPTCHA test
+  // Call when the user finishes the CAPTCHA test
   const handleCaptchaChange = (token) => {
     console.log("Captcha token:", token);
     if (token) {
-      setCaptchaToken(token);
       setCaptchaVerified(true);
     } else {
       setCaptchaVerified(false);
-      setCaptchaToken("");
     }
   };
 
   const handleNextPage = () => {
     if (captchaVerified) {
-      navigate("/welcome"); 
+      navigate("/welcome");
     } else {
       alert("Please complete the CAPTCHA first!");
     }
   };
-  
+
   // Automatically takes a screenshot on the server side
   const captureScreenshot = async () => {
     const url = "http://localhost:3000/"; // The URL you want to capture
@@ -103,7 +80,7 @@ const CaptchaTest = () => {
     }
   };
 
- // A function that sends an image path and a prompt to Gemini and receives a response
+  // A function that sends an image path and a prompt to Gemini and receives a response
   const sendCaptchaAndPromptToGemini = async () => {
     try {
       // Sending the image and prompt to the server
@@ -172,74 +149,82 @@ const CaptchaTest = () => {
       sx={{
         textAlign: "center",
         padding: "40px",
-        paddingTop: "100px", 
+        paddingTop: "100px",
         backgroundColor: "#f0f4f8",
         minHeight: "100vh",
       }}
     >
       <NavigationMenu />
-  
+
       <Typography variant="h4" gutterBottom>
         Google reCAPTCHA Test
       </Typography>
-  
+
       <Typography variant="body1" gutterBottom sx={{ marginBottom: "20px" }}>
         Please complete the CAPTCHA below:
       </Typography>
-  
+
       <Box
-  sx={{
-    display: "flex",
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    marginBottom: "30px", 
-    width: "100%",
-  }}
->
- 
-  <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-start", marginTop: "130px" }}>
-    <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
-  </Box>
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "30px",
+          width: "100%",
+        }}
+      >
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "flex-start",
+            marginTop: "130px",
+          }}
+        >
+          <ReCAPTCHA
+            sitekey={RECAPTCHA_SITE_KEY}
+            onChange={handleCaptchaChange}
+          />
+        </Box>
 
-  <Box
-    sx={{
-      display: "flex",
-      flexDirection: "row", 
-      gap: "10px", 
-      justifyContent: "center",
-      flex: 1,
-    }}
-  >
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={handleNextPage}
-      disabled={!isCaptchaSuccessful}
-    >
-      Next Page
-    </Button>
-    <Button
-      variant="contained"
-      sx={{
-        backgroundColor: "#5b9efc",
-        "&:hover": {
-          backgroundColor: "#4687e6",
-        },
-      }}
-      onClick={() => {
-        setTimeout(() => {
-          captureScreenshot();
-        }, 3000); 
-      }}
-    >
-      Capture Screenshot
-    </Button>
-  </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "10px",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNextPage}
+            disabled={!isCaptchaSuccessful}
+          >
+            Next Page
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#5b9efc",
+              "&:hover": {
+                backgroundColor: "#4687e6",
+              },
+            }}
+            onClick={() => {
+              setTimeout(() => {
+                captureScreenshot();
+              }, 3000);
+            }}
+          >
+            Capture Screenshot
+          </Button>
+        </Box>
 
-  <Box sx={{ flex: 1 }} />
-</Box>
+        <Box sx={{ flex: 1 }} />
+      </Box>
 
-  
       {loading && (
         <Box mt={4}>
           <CircularProgress />
@@ -248,19 +233,13 @@ const CaptchaTest = () => {
           </Typography>
         </Box>
       )}
-  
+
       {error && (
         <Typography variant="body2" color="error" mt={2}>
           {error}
         </Typography>
       )}
-  
-      {verificationResult && (
-        <Typography variant="h6" color="success" mt={2}>
-          {verificationResult}
-        </Typography>
-      )}
-  
+
       {geminiResponse && (
         <Paper
           elevation={1}
@@ -279,7 +258,7 @@ const CaptchaTest = () => {
           </Typography>
         </Paper>
       )}
-  
+
       <Box mt={5}>
         <Typography variant="body1" gutterBottom>
           Was the CAPTCHA successful?
@@ -308,7 +287,6 @@ const CaptchaTest = () => {
       </Box>
     </Box>
   );
-  
 };
 
 export default CaptchaTest;
@@ -503,144 +481,137 @@ export default CaptchaTest;
 
 // };
 
-
 //גירסת עיברית לעיצוב
 // <Box
-    //   sx={{
-    //     textAlign: "center",
-    //     padding: "40px",
-    //     paddingTop: "100px", // להזיז את התוכן למטה
-    //     backgroundColor: "#f0f4f8",
-    //     minHeight: "100vh",
-    //   }}
-    // >
-    //   <NavigationMenu />
-  
-    //   <Typography variant="h4" gutterBottom>
-    //     Google reCAPTCHA Test
-    //   </Typography>
-  
-    //   <Typography variant="body1" gutterBottom sx={{ marginBottom: "20px" }}>
-    //     Please complete the CAPTCHA below:
-    //   </Typography>
-  
-    //   <Box
-    //     sx={{
-    //       display: "flex",
-    //       justifyContent: "space-between", // הקפצ'ה בצד ימין, כפתורים במרכז
-    //       alignItems: "center", // יישור בגובה
-    //       marginBottom: "30px", // מרווח מתחת לאזור
-    //       width: "100%", // יתפוס את כל הרוחב
-    //     }}
-    //   >
-    //     {/* קופסה ריקה עבור יישור מרווח משמאל */}
-    //     <Box sx={{ flex: 1 }} />
-  
-    //     {/* הכפתורים במרכז */}
-    //     <Box
-    //       sx={{
-    //         display: "flex",
-    //         flexDirection: "row", // הכפתורים יופיעו אחד ליד השני
-    //         gap: "10px", // מרווח בין הכפתורים
-    //       }}
-    //     >
-    //       <Button
-    //         variant="contained"
-    //         color="primary"
-    //         onClick={handleSubmit}
-    //         disabled={!isCaptchaSuccessful}
-    //       >
-    //         Next Page
-    //       </Button>
-    //       <Button
-    //         variant="contained"
-    //         sx={{
-    //           backgroundColor: "#5b9efc",
-    //           "&:hover": {
-    //             backgroundColor: "#4687e6",
-    //           },
-    //         }}
-    //         onClick={() => {
-    //           setTimeout(() => {
-    //             captureScreenshot();
-    //           }, 3000); // הפעלה לאחר 3 שניות
-    //         }}
-    //       >
-    //         Capture Screenshot
-    //       </Button>
-    //     </Box>
-  
-    //     {/* הקפצ'ה בצד ימין */}
-    //     <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" , marginTop: "130px" }}>
-    //       <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
-    //     </Box>
-    //   </Box>
-  
-    //   {loading && (
-    //     <Box mt={4}>
-    //       <CircularProgress />
-    //       <Typography variant="body2" sx={{ marginTop: "10px" }}>
-    //         Processing...
-    //       </Typography>
-    //     </Box>
-    //   )}
-  
-    //   {error && (
-    //     <Typography variant="body2" color="error" mt={2}>
-    //       {error}
-    //     </Typography>
-    //   )}
-  
-    //   {verificationResult && (
-    //     <Typography variant="h6" color="success" mt={2}>
-    //       {verificationResult}
-    //     </Typography>
-    //   )}
-  
-    //   {geminiResponse && (
-    //     <Paper
-    //       elevation={1}
-    //       sx={{
-    //         padding: "20px",
-    //         marginTop: "30px",
-    //         backgroundColor: "#ffffff",
-    //         textAlign: "left",
-    //         maxWidth: "500px", // צמצום הרוחב של התשובה
-    //         margin: "auto",
-    //       }}
-    //     >
-    //       <Typography variant="h6">Gemini Response:</Typography>
-    //       <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
-    //         {geminiResponse}
-    //       </Typography>
-    //     </Paper>
-    //   )}
-  
-    //   <Box mt={5}>
-    //     <Typography variant="body1" gutterBottom>
-    //       Was the CAPTCHA successful?
-    //     </Typography>
-    //     <Box display="flex" justifyContent="center" mt={2}>
-    //       <RadioGroup
-    //         row
-    //         value={isCaptchaSuccessful}
-    //         onChange={(e) => setIsCaptchaSuccessful(e.target.value === "true")}
-    //       >
-    //         <FormControlLabel value="true" control={<Radio />} label="Yes" />
-    //         <FormControlLabel value="false" control={<Radio />} label="No" />
-    //       </RadioGroup>
-    //     </Box>
-    //     <Button
-    //       variant="outlined"
-    //       color="primary"
-    //       onClick={() => {
-    //         alert("Result submitted!");
-    //         handleSaveResult();
-    //       }}
-    //       sx={{ mt: 3 }}
-    //       disabled={isCaptchaSuccessful === null}
-    //     >
-    //       Submit Result
-    //     </Button>
-    //   </Box>
-    // </Box>
+//   sx={{
+//     textAlign: "center",
+//     padding: "40px",
+//     paddingTop: "100px", // להזיז את התוכן למטה
+//     backgroundColor: "#f0f4f8",
+//     minHeight: "100vh",
+//   }}
+// >
+//   <NavigationMenu />
+
+//   <Typography variant="h4" gutterBottom>
+//     Google reCAPTCHA Test
+//   </Typography>
+
+//   <Typography variant="body1" gutterBottom sx={{ marginBottom: "20px" }}>
+//     Please complete the CAPTCHA below:
+//   </Typography>
+
+//   <Box
+//     sx={{
+//       display: "flex",
+//       justifyContent: "space-between", // הקפצ'ה בצד ימין, כפתורים במרכז
+//       alignItems: "center", // יישור בגובה
+//       marginBottom: "30px", // מרווח מתחת לאזור
+//       width: "100%", // יתפוס את כל הרוחב
+//     }}
+//   >
+//     {/* קופסה ריקה עבור יישור מרווח משמאל */}
+//     <Box sx={{ flex: 1 }} />
+
+//     {/* הכפתורים במרכז */}
+//     <Box
+//       sx={{
+//         display: "flex",
+//         flexDirection: "row", // הכפתורים יופיעו אחד ליד השני
+//         gap: "10px", // מרווח בין הכפתורים
+//       }}
+//     >
+//       <Button
+//         variant="contained"
+//         color="primary"
+//         onClick={handleSubmit}
+//         disabled={!isCaptchaSuccessful}
+//       >
+//         Next Page
+//       </Button>
+//       <Button
+//         variant="contained"
+//         sx={{
+//           backgroundColor: "#5b9efc",
+//           "&:hover": {
+//             backgroundColor: "#4687e6",
+//           },
+//         }}
+//         onClick={() => {
+//           setTimeout(() => {
+//             captureScreenshot();
+//           }, 3000); // הפעלה לאחר 3 שניות
+//         }}
+//       >
+//         Capture Screenshot
+//       </Button>
+//     </Box>
+
+//     {/* הקפצ'ה בצד ימין */}
+//     <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" , marginTop: "130px" }}>
+//       <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
+//     </Box>
+//   </Box>
+
+//   {loading && (
+//     <Box mt={4}>
+//       <CircularProgress />
+//       <Typography variant="body2" sx={{ marginTop: "10px" }}>
+//         Processing...
+//       </Typography>
+//     </Box>
+//   )}
+
+//   {error && (
+//     <Typography variant="body2" color="error" mt={2}>
+//       {error}
+//     </Typography>
+//   )}
+
+//   {geminiResponse && (
+//     <Paper
+//       elevation={1}
+//       sx={{
+//         padding: "20px",
+//         marginTop: "30px",
+//         backgroundColor: "#ffffff",
+//         textAlign: "left",
+//         maxWidth: "500px", // צמצום הרוחב של התשובה
+//         margin: "auto",
+//       }}
+//     >
+//       <Typography variant="h6">Gemini Response:</Typography>
+//       <Typography variant="body2" style={{ whiteSpace: "pre-line" }}>
+//         {geminiResponse}
+//       </Typography>
+//     </Paper>
+//   )}
+
+//   <Box mt={5}>
+//     <Typography variant="body1" gutterBottom>
+//       Was the CAPTCHA successful?
+//     </Typography>
+//     <Box display="flex" justifyContent="center" mt={2}>
+//       <RadioGroup
+//         row
+//         value={isCaptchaSuccessful}
+//         onChange={(e) => setIsCaptchaSuccessful(e.target.value === "true")}
+//       >
+//         <FormControlLabel value="true" control={<Radio />} label="Yes" />
+//         <FormControlLabel value="false" control={<Radio />} label="No" />
+//       </RadioGroup>
+//     </Box>
+//     <Button
+//       variant="outlined"
+//       color="primary"
+//       onClick={() => {
+//         alert("Result submitted!");
+//         handleSaveResult();
+//       }}
+//       sx={{ mt: 3 }}
+//       disabled={isCaptchaSuccessful === null}
+//     >
+//       Submit Result
+//     </Button>
+//   </Box>
+// </Box>

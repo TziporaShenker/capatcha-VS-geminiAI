@@ -7,23 +7,23 @@ const sharp = require("sharp");
 const captureAndUpload = async (req, res) => {
   console.log("Starting screenshot process...");
   try {
-    // 1. צילום מסך של כל המסך
+    // 1. Capture a screenshot of the entire desktop
     const img = await screenshot();
-    console.log("Screenshot captured!");
 
-    // 2. הגדרת נתיב לשמירת התמונה החתוכה
+    // 2. Define the path to save the cropped image
     const croppedImagePath = path.join(
       __dirname,
       "../screenshots",
       `cropped-screenshot-${Date.now()}.png`
     );
 
-    // 3. יצירת תיקייה במידת הצורך
+    // 3. Create the directory if it doesn't exist
     const dir = path.dirname(croppedImagePath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
+
+    // 4. Crop the screenshot based on environment variables and save it
     await sharp(img)
       .extract({
         left: Number(process.env.CLIP_X),
@@ -35,7 +35,7 @@ const captureAndUpload = async (req, res) => {
 
     console.log("Cropped image saved locally!");
 
-    // 5. החזרת תגובה ללקוח
+    // 5. Send a response back to the client with the cropped image details
     res.json({
       success: true,
       message: "Screenshot captured, cropped, and saved successfully!",

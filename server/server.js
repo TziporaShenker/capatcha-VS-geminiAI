@@ -39,10 +39,6 @@ app.use("/captchaTable", captchaTableRoute);
 app.use("/screenshots", express.static(path.join(__dirname, "screenshots")));
 app.use("/analyzeData", analyzeData);
 
-
-
-
-
 // הפעלת השרת
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

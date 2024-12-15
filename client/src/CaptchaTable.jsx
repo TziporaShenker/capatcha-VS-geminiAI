@@ -18,7 +18,7 @@ const CaptchaTable = () => {
   const [captchaResults, setCaptchaResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [geminiAnalysis, setGeminiAnalysis] = useState(null); // אחסון תוצאות מג'מיני
+  const [geminiAnalysis, setGeminiAnalysis] = useState(null); 
 
   useEffect(() => {
     const fetchCaptchaResults = async () => {

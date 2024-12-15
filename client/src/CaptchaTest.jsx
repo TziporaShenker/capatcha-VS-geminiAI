@@ -24,6 +24,9 @@ const CaptchaTest = () => {
   const [isCaptchaSuccessful, setIsCaptchaSuccessful] = useState(null);
   const navigate = useNavigate();
 
+  // Google reCAPTCHA Site Key
+  const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";
+
   // Using useEffect for filePath
   useEffect(() => {
     if (filePath) {
@@ -612,6 +615,3 @@ export default CaptchaTest;
 //     </Button>
 //   </Box>
 // </Box>
-
-// // Google reCAPTCHA Site Key
-// const RECAPTCHA_SITE_KEY = "6LfdW4QqAAAAADVsDtxwmOhFo3j9LI1oLeEvmbvb";

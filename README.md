@@ -52,3 +52,14 @@ With a **~90% success rate on the very first attempt**, this experiment raises b
 git clone https://github.com/your-username/captcha-vs-gemini.git
 cd captcha-vs-gemini
 npm install
+
+### Run the project
+- **Client:**
+```bash
+cd client
+npm start
+- **Server:**
+cd server
+npm start
+
+
